@@ -121,3 +121,7 @@ int main(int argc, char* argv[])
 4. Now, when I open a non-existent .cpp file, I'll be prompted to select which of the two template file to inject into the buffer.
 
 ![templatory-nvim-select-menu](https://github.com/dheerajshenoy/templatory.nvim/assets/21986384/b9bc60a9-8e95-4cc5-8e13-3246fe44f5ee)
+
+### Demo
+
+https://github.com/dheerajshenoy/templatory.nvim/assets/21986384/abd3f33b-0752-4bcc-bd13-4646d252d477
