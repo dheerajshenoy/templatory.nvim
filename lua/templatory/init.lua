@@ -135,8 +135,10 @@ M.new = function ()
     if ft ~= nil then
         local bufnr = vim.api.nvim_create_buf(true, false)
         vim.api.nvim_set_current_buf(bufnr)
+        vim.api.nvim_set_current_dir(M.templates_dir)
         vim.bo.filetype = ft
         vim.schedule(function() vim.notify("New template file opened. Save it once editing is finished with the extension of the required language", vim.log.levels.INFO) end)
+
     end
 end
 
