@@ -1,5 +1,8 @@
 local M = {}
 
+local utils = require("Templatory.utils")
+
+
 local PLUGIN_NAME = "Templatory"
 local skfile = "sk"
 
@@ -21,7 +24,7 @@ M.__template_insert_helper = function (content)
 end
 
 M.__read_file = function (filepath)
-    if M.__is_file(filepath) then
+    if utils.is_file(filepath) then
         return vim.fn.readfile(filepath)
     else
         return nil
@@ -68,35 +71,12 @@ M.__template_insert = function()
     end
 end
 
--- Function to replace ~ 'tilde' sign with the home directory of the user
-M.__replace_tilde_with_home = function (path)
-    -- Check if the path starts with ~
-    if string.sub(path, 1, 1) == '~' then
-        -- Get the user's home directory
-        local home = vim.fn.expand('~')
-        -- Replace ~ with the home directory
-        path = home .. string.sub(path, 2)
-    end
-    return path
-end
-
--- Function to check if directory exists
-M.__is_directory = function (path)
-    local stat = vim.loop.fs_stat(path)
-    return stat and stat.type == "directory"
-end
-
-M.__is_file = function (path)
-    local stat = vim.loop.fs_stat(path)
-    return stat and stat.type == "file"
-end
-
 -- Setup function
 M.setup = function(opts)
 
     if opts ~= nil then
 
-        M.skeleton_dir = M.__replace_tilde_with_home(opts.skeleton_dir)
+        M.skeleton_dir = utils.replace_tilde_with_home(opts.skeleton_dir)
         M.goto_cursor_line = opts.goto_cursor_line or true
         M.cursor_pattern = opts.cursor_pattern or "$C"
         M.prompt = opts.prompt or false
@@ -109,7 +89,7 @@ M.setup = function(opts)
             error(string.format("%s: Please create a skeleton directory and pass to the setup function", PLUGIN_NAME))
         else
             -- if skeleton directory exists
-            if M.__is_directory(M.skeleton_dir) then
+            if utils.is_directory(M.skeleton_dir) then
                 if M.auto_insert_template then
                     vim.api.nvim_create_autocmd("BufNewFile", {
                         group = augroup,
