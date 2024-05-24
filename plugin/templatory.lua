@@ -3,7 +3,7 @@ local function command (name, callback, options)
   vim.api.nvim_create_user_command(name, callback, final_opts)
 end
 
-local templatory = require("Templatory")
+local templatory = require("templatory")
 
 command("TemplatoryNew", function () templatory.create_template() end)
 command("TemplatoryVisitFile", function () templatory.visit_file() end)

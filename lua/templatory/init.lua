@@ -1,10 +1,10 @@
 local M = {}
 
-local utils = require("Templatory.utils")
+local utils = require("templatory.utils")
 
 
-local PLUGIN_NAME = "Templatory"
-local skfile = "sk"
+local PLUGIN_NAME = "templatory"
+local SKFILENAME = "sk"
 
 local augroup = vim.api.nvim_create_augroup(PLUGIN_NAME, { clear = true })
 
@@ -36,25 +36,19 @@ M.__template_insert = function()
 
     local ext = vim.fn.expand("%:e")
 
-    if vim.fn.expand("%:t") == string.format("%s.%s", skfile, ext) or ext == nil then
+    if vim.fn.expand("%:t") == string.format("%s.%s", SKFILENAME, ext) or ext == nil then
         return
     end
 
-    local content = M.__read_file(M.skeleton_dir .. string.format("%s.%s", skfile, ext))
+    local content = M.__read_file(M.skeleton_dir .. string.format("%s.%s", SKFILENAME, ext))
     if content == nil then
         if M.echo_no_file then
             if M.prompt_for_no_file then
-                local input = vim.fn.input("No skeleton file found. Do you want to create one ? (y/n): ")
-                if input:lower() == 'y' then
-                    local filetype = vim.bo.filetype
-                    vim.api.nvim_command("edit " .. M.skeleton_dir .. string.format("%s.%s", skfile, ext))
-                    vim.api.nvim_set_option_value("filetype", filetype, {})
-                end
-                return
-            else
-                print("No skeleton file found")
-                return
+                utils.prompt_for_no_file(M.skeleton_dir, SKFILENAME, ext)
             end
+            return
+        else
+            print("No skeleton file found")
             return
         end
         return
@@ -111,15 +105,25 @@ M.setup = function(opts)
 end
 
 M.create_template = function ()
-
 end
 
 M.visit_file = function ()
-
+    local fext = vim.fn.expand("%:e")
+    if fext ~= nil then
+        if utils.has_skfile(M.skeleton_dir, fext) then
+            vim.cmd("edit " .. M.skeleton_dir .. string.format("sk.%s", fext))
+            print(string.format("Skeleton file opened for %s file", fext))
+        else
+            if M.prompt_for_no_file then
+                utils.prompt_for_no_file(M.skeleton_dir, SKFILENAME, fext)
+                return
+            end
+            print("No skeleton file found for this file")
+        end
+    end
 end
 
 M.visit_dir = function ()
-
 
 end
 

@@ -23,4 +23,21 @@ M.replace_tilde_with_home = function (path)
     return path
 end
 
+-- Checks if the current buffer has a skfile associated with it
+M.has_skfile = function (skdir, fext)
+    if M.is_file(skdir .. string.format("sk.%s", fext)) then
+        return true
+    else
+        return false
+    end
+end
+
+M.prompt_for_no_file = function (skdir, skfile, ext)
+    local input = vim.fn.input("No skeleton file found. Do you want to create one ? (y/n): ")
+    if input:lower() == 'y' then
+        vim.api.nvim_command("edit " .. skdir .. string.format("%s.%s", skfile, ext))
+        vim.api.nvim_set_option_value("filetype", vim.bo.filetype, {})
+    end
+end
+
 return M
