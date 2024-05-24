@@ -66,7 +66,7 @@ These are specified like `:Templatory option_name` where `option_name` is one of
 
 ### Workflow
 
-1. Let's say I want to create a template file for C++ boilerplate code. I create a new template file using `:Templatory new` and hen save it with some filename (filenames don't matter, only the extensions do!), let's say `temp.cpp` with the following contents and save the file.
+1. Let's say I want to create a template file for C++ boilerplate code. I create a new template file using `:Templatory new` and hen save it with some filename (filenames don't matter, only the extensions do!), let's say `sk.cpp` with the following contents and save the file.
 
 ```cpp
 #include <iostream>
@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
 
 2. I open a new .cpp file, then based on the configuration of the plugin, I will be prompted to add the template code. If accepted, the code will be injected to the buffer.
 
-3. Now, I create another template file called `temp2.cpp` with the following contents and save it.
+3. Now, I create another template file called `sk2.cpp` with the following contents and save it.
 
 
 ```cpp
@@ -119,3 +119,5 @@ int main(int argc, char* argv[])
 ```
 
 4. Now, when I open a non-existent .cpp file, I'll be prompted to select which of the two template file to inject into the buffer.
+
+![templatory-nvim-select-menu](https://github.com/dheerajshenoy/templatory.nvim/assets/21986384/b9bc60a9-8e95-4cc5-8e13-3246fe44f5ee)
