@@ -1,5 +1,9 @@
 local M = {}
 
+M.set_skdir = function (skdir)
+    M.skdir = skdir
+end
+
 M.is_directory = function(path)
   local stat = vim.loop.fs_stat(path)
   return stat and stat.type == "directory"
@@ -24,20 +28,47 @@ M.replace_tilde_with_home = function (path)
 end
 
 -- Checks if the current buffer has a skfile associated with it
-M.has_skfile = function (skdir, fext)
-    if M.is_file(skdir .. string.format("sk.%s", fext)) then
+M.has_skfile = function (fext)
+    if M.is_file(M.skdir .. string.format("sk.%s", fext)) then
         return true
-    else
-        return false
+    end
+    return false
+end
+
+M.prompt_for_no_file = function (ext)
+    local input = vim.fn.input("No skeleton file found. Do you want to create one ? (y/n): ")
+    if input:lower() == 'y' then
+        -- TODO : detect if there are multiple files. If there are, provide a ui select menu to select the template required.
+        -- vim.api.nvim_command("edit " .. M.skdir .. string.format("%s.%s", ext))
+        vim.api.nvim_set_option_value("filetype", vim.bo.filetype, {})
     end
 end
 
-M.prompt_for_no_file = function (skdir, skfile, ext)
-    local input = vim.fn.input("No skeleton file found. Do you want to create one ? (y/n): ")
-    if input:lower() == 'y' then
-        vim.api.nvim_command("edit " .. skdir .. string.format("%s.%s", skfile, ext))
-        vim.api.nvim_set_option_value("filetype", vim.bo.filetype, {})
+M.is_skdir = function ()
+    if vim.fn.expand("%:h") == M.skdir then
+        return true
     end
+    return false
+end
+
+M.get_skfiles_with_ext = function(ext)
+    local handle, err = vim.loop.fs_scandir(M.skdir)
+    if not handle then
+        print("Error opening skeleton directory: " .. err)
+        return {}
+    end
+
+    local result = {}
+
+    while true do
+        local name, typ = vim.loop.fs_scandir_next(handle)
+        if not name then break end
+        if typ == 'file' and name:sub(-#ext) == ext then
+            table.insert(result, name)
+        end
+    end
+    return result
+
 end
 
 return M
