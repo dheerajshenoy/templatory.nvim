@@ -24,7 +24,7 @@ M.__read_file = function (ext)
     local nfiles = #files
 
     if nfiles == 1 then
-        M.__template_insert_helper(vim.fn.readfile(M.skdir .. files[1]))
+        M.__template_insert_helper(vim.fn.readfile(M.templates_dir .. files[1]))
         return true
     else if nfiles > 1 then
             vim.schedule(function ()
@@ -33,7 +33,7 @@ M.__read_file = function (ext)
                         if choice == nil then
                             return
                         end
-                        local content = vim.fn.readfile(M.skdir .. choice)
+                        local content = vim.fn.readfile(M.templates_dir .. choice)
                         M.__handle_content(content, ext)
                     end)
             end)
@@ -65,7 +65,7 @@ M.__template_insert = function()
 
     local ext = vim.fn.expand("%:e")
 
-    if utils.is_skdir() or ext == nil then
+    if utils.is_templates_dir() or ext == nil then
         return
     end
 
@@ -79,15 +79,15 @@ end
 -- Setup function
 M.setup = function(opts)
 
-    if opts.skdir then
-        M.skdir = opts.skdir
+    if opts.templates_dir then
+        M.templates_dir = opts.templates_dir
     else
-        M.skdir = vim.fn.stdpath("config") .. "/templates/"
+        M.templates_dir = vim.fn.stdpath("config") .. "/templates/"
     end
 
-    M.skdir = utils.replace_tilde_with_home(M.skdir)
+    M.templates_dir = utils.replace_tilde_with_home(M.templates_dir)
 
-    utils.set_skdir(M.skdir)
+    utils.set_templates_dir(M.templates_dir)
 
     M.goto_cursor_line = opts.goto_cursor_line or true
     M.cursor_pattern = opts.cursor_pattern or "$C"
@@ -99,11 +99,11 @@ M.setup = function(opts)
 
 
     -- Check for skeleton directory
-    if M.skdir == nil then
+    if M.templates_dir == nil then
         error(string.format("%s: Please create a skeleton directory and pass to the setup function", PLUGIN_NAME))
     else
         -- if skeleton directory exists
-        if vim.fn.isdirectory(M.skdir) == 1 then
+        if vim.fn.isdirectory(M.templates_dir) == 1 then
             if M.prompt_no_skfiles and #utils.get_all_skfiles() == 0 then
                 vim.schedule(function() vim.notify(string.format("%s: No skeleton files found!", PLUGIN_NAME), logl.WARN) end)
             end
@@ -118,10 +118,10 @@ M.setup = function(opts)
         else
             local res = vim.fn.input(string.format("%s: Skeleton directory doesn't exist. Do you want to create it ? (y/n): ", PLUGIN_NAME))
             if res:lower() == 'y' then
-                if vim.fn.mkdir(M.skdir) then
-                    vim.schedule(function() vim.notify(string.format("%s: Skeleton directory created at " .. M.skdir, PLUGIN_NAME), logl.INFO) end)
+                if vim.fn.mkdir(M.templates_dir) then
+                    vim.schedule(function() vim.notify(string.format("%s: Skeleton directory created at " .. M.templates_dir, PLUGIN_NAME), logl.INFO) end)
                 else
-                    vim.schedule(function() vim.notify(string.format("%s: Could not create skeleton directory at " .. M.skdir, PLUGIN_NAME), logl.ERROR) end)
+                    vim.schedule(function() vim.notify(string.format("%s: Could not create skeleton directory at " .. M.templates_dir, PLUGIN_NAME), logl.ERROR) end)
                 end
             end
             return
@@ -146,10 +146,10 @@ M.visit_file = function ()
     if ext ~= nil then
         local files = utils.get_skfiles_with_ext(ext)
         if #files == 1 then
-            vim.cmd("edit " .. M.skdir .. files[1])
+            vim.cmd("edit " .. M.templates_dir .. files[1])
         else if #files > 1 then
                 vim.ui.select(files, { prompt = "Select the skeleton file" }, function (choice)
-                    vim.cmd("edit " .. M.skdir .. choice)
+                    vim.cmd("edit " .. M.templates_dir .. choice)
                 end)
             else
                 vim.schedule(function() vim.notify(string.format("%s: No skeleton file found", PLUGIN_NAME), logl.ERROR) end)
@@ -169,7 +169,7 @@ end
 
 -- Visit the templates directory
 M.visit_dir = function ()
-    vim.cmd("edit " .. M.skdir)
+    vim.cmd("edit " .. M.templates_dir)
 end
 
 -- Function that injects template file content to the current buffer. This can be used if auto insertion of templates is disabled
@@ -182,9 +182,9 @@ M.info = function ()
     local nfiles = #utils.get_all_skfiles()
     
     if nfiles > 1 then
-        vim.schedule(function() vim.notify(string.format("%s: Found %d template files in the '%s' skeleton directory.", PLUGIN_NAME, nfiles, M.skdir), logl.INFO) end)
+        vim.schedule(function() vim.notify(string.format("%s: Found %d template files in the '%s' skeleton directory.", PLUGIN_NAME, nfiles, M.templates_dir), logl.INFO) end)
     else
-        vim.schedule(function() vim.notify(string.format("%s: Found %d template file in the '%s' skeleton directory.", PLUGIN_NAME, nfiles, M.skdir), logl.INFO) end)
+        vim.schedule(function() vim.notify(string.format("%s: Found %d template file in the '%s' skeleton directory.", PLUGIN_NAME, nfiles, M.templates_dir), logl.INFO) end)
     end
 end
 

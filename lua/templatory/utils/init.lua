@@ -3,8 +3,8 @@ local M = {}
 M.PLUGIN_NAME = "templatory"
 
 -- Set the skeleton directory for ease of access in this file
-M.set_skdir = function (skdir)
-    M.skdir = skdir
+M.set_templates_dir = function (templates_dir)
+    M.templates_dir = templates_dir
 end
 
 -- Check if `path` points to a valid file that exists
@@ -15,7 +15,7 @@ end
 
 -- Get all the skeleton files from the skeleton directory
 M.get_all_skfiles = function ()
-    local handle, err = vim.loop.fs_scandir(M.skdir)
+    local handle, err = vim.loop.fs_scandir(M.templates_dir)
     if not handle then
         vim.notify(string.format("%s: Error opening skeleton directory: " .. err, err), vim.log.levels.ERROR)
         return {}
@@ -54,7 +54,7 @@ end
 
 -- Checks if the current buffer has a skfile associated with it
 M.has_skfile = function (fext)
-    if M.is_file(M.skdir .. string.format("sk.%s", fext)) then
+    if M.is_file(M.templates_dir .. string.format("sk.%s", fext)) then
         return true
     end
     return false
@@ -77,15 +77,15 @@ M.prompt_for_no_file = function (ext)
     end
 end
 
-M.is_skdir = function ()
-    if vim.fn.expand("%:h") == M.skdir then
+M.is_templates_dir = function ()
+    if vim.fn.expand("%:h") == M.templates_dir then
         return true
     end
     return false
 end
 
 M.get_skfiles_with_ext = function(ext)
-    local handle, err = vim.loop.fs_scandir(M.skdir)
+    local handle, err = vim.loop.fs_scandir(M.templates_dir)
     if not handle then
         vim.notify(string.format("%s: Error opening skeleton directory: " .. err, M.PLUGIN_NAME), vim.log.levels.ERROR)
         return {}
