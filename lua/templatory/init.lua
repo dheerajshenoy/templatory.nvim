@@ -2,6 +2,7 @@ local M = {}
 local utils = require("templatory.utils")
 local PLUGIN_NAME = "templatory"
 local augroup = vim.api.nvim_create_augroup(PLUGIN_NAME, { clear = true })
+local logl = vim.log.levels
 
 
 M.__template_insert_helper = function (content)
@@ -39,7 +40,7 @@ M.__read_file = function (ext)
             end)
             return true
         else
-            print("No skeleton file found")
+            vim.notify(string.format("%s: No skeleton file found", PLUGIN_NAME), logl.ERROR)
             return false
         end
     end
@@ -56,7 +57,7 @@ M.__handle_content = function (content, ext)
         M.__template_insert_helper(content)
     end
 
-    print("Template added")
+    vim.notify(string.format("%s: Template added", PLUGIN_NAME), logl.INFO)
     return true
 end
 
@@ -72,48 +73,59 @@ M.__template_insert = function()
     local status = M.__read_file(ext)
 
     if status == nil then
-        print("Unable to read skeleton file")
+        vim.notify(string.format("%s: Unable to read skeleton file", PLUGIN_NAME), logl.ERROR)
     end
 end
 
 -- Setup function
 M.setup = function(opts)
 
-    if opts ~= nil then
-
-        M.skdir = utils.replace_tilde_with_home(opts.skdir)
-        utils.set_skdir(M.skdir)
-        M.goto_cursor_line = opts.goto_cursor_line or true
-        M.cursor_pattern = opts.cursor_pattern or "$C"
-        M.prompt = opts.prompt or false
-        M.echo_no_file = opts.echo_no_file or false
-        M.prompt_for_no_file = opts.prompt_for_no_file or false
-        M.auto_insert_template = opts.auto_insert_template or true
-
-        -- Check for skeleton directory
-        if M.skdir == nil then
-            error(string.format("%s: Please create a skeleton directory and pass to the setup function", PLUGIN_NAME))
-        else
-            -- if skeleton directory exists
-            if utils.is_directory(M.skdir) then
-                if M.auto_insert_template then
-                    vim.api.nvim_create_autocmd("BufNewFile", {
-                        group = augroup,
-                        desc = "Insert template into newly created file if the skeleton file for it exists",
-                        once = true,
-                        callback = M.__template_insert
-                    })
-                end
-            else
-                -- Else print error
-                error(string.format("%s: Skeleton directory doesn't exist", PLUGIN_NAME))
-            end
-        end
+    if opts.skdir then
+        M.skdir = opts.skdir
     else
-        -- if opts table not passed print error
-        error(string.format("%s: Pass an opts table", PLUGIN_NAME))
+        M.skdir = vim.fn.stdpath("config") .. "/templates/"
     end
 
+    utils.set_skdir(utils.replace_tilde_with_home(M.skdir))
+
+    M.goto_cursor_line = opts.goto_cursor_line or true
+    M.cursor_pattern = opts.cursor_pattern or "$C"
+    M.prompt = opts.prompt or false
+    M.echo_no_file = opts.echo_no_file or false
+    M.prompt_for_no_file = opts.prompt_for_no_file or false
+    M.auto_insert_template = opts.auto_insert_template or true
+    M.prompt_no_skfiles = opts.prompt_no_skfiles or true
+
+
+    -- Check for skeleton directory
+    if M.skdir == nil then
+        error(string.format("%s: Please create a skeleton directory and pass to the setup function", PLUGIN_NAME))
+    else
+        -- if skeleton directory exists
+        if vim.fn.isdirectory(M.skdir) == 1 then
+            if M.prompt_no_skfiles and #utils.get_all_skfiles() == 0 then
+                vim.schedule(function() vim.notify(string.format("%s: No skeleton files found!", PLUGIN_NAME), logl.WARN) end)
+            end
+            if M.auto_insert_template then
+                vim.api.nvim_create_autocmd("BufNewFile", {
+                    group = augroup,
+                    desc = "Insert template into newly created file if the skeleton file for it exists",
+                    once = true,
+                    callback = M.__template_insert
+                })
+            end
+        else
+            local res = vim.fn.input(string.format("%s: Skeleton directory doesn't exist. Do you want to create it ? (y/n): ", PLUGIN_NAME))
+            if res:lower() == 'y' then
+                if vim.fn.mkdir(M.skdir) then
+                    vim.notify(string.format("%s: Skeleton directory created at " .. M.skdir, PLUGIN_NAME), logl.INFO)
+                else
+                    vim.notify(string.format("%s: Could not create skeleton directory at " .. M.skdir, PLUGIN_NAME), logl.ERROR)
+                end
+            end
+            return
+        end
+    end
 end
 
 M.create_template = function ()
@@ -130,7 +142,7 @@ M.visit_file = function ()
                     vim.cmd("edit " .. M.skdir .. choice)
                 end)
             else
-                print("No skeleton file found")
+                vim.notify(string.format("%s: No skeleton file found", PLUGIN_NAME), logl.ERROR)
                 return
             end
         end
@@ -139,10 +151,10 @@ M.visit_file = function ()
             utils.prompt_for_no_file(ext)
             return
         end
-        print("No skeleton file found for this file")
+        vim.notify(string.format("%s: No skeleton file found for this file", PLUGIN_NAME), logl.ERROR)
         return
     end
-    print(string.format("Skeleton file opened for %s file", ext))
+    vim.notify(string.format("%s: Skeleton file opened for %s file", PLUGIN_NAME, ext), logl.INFO)
 end
 
 M.visit_dir = function ()

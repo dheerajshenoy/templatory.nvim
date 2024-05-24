@@ -1,22 +1,43 @@
 local M = {}
 
 M.set_skdir = function (skdir)
+    print(skdir)
     M.skdir = skdir
 end
-
-M.is_directory = function(path)
-  local stat = vim.loop.fs_stat(path)
-  return stat and stat.type == "directory"
-end
-
 
 M.is_file = function (path)
     local stat = vim.loop.fs_stat(path)
     return stat and stat.type == "file"
 end
 
+M.get_all_skfiles = function ()
+    local handle, err = vim.loop.fs_scandir(M.skdir)
+    if not handle then
+        print("Error opening skeleton directory: " .. err)
+        return {}
+    end
+
+    local result = {}
+
+    while true do
+        local name, typ = vim.loop.fs_scandir_next(handle)
+        if not name then break end
+        if typ == "file" then
+            table.insert(result, name)
+        end
+    end
+    return result
+end
+
+M.check_skfiles = function ()
+end
 
 M.replace_tilde_with_home = function (path)
+
+    if path == nil then
+        return
+    end
+
     -- Check if the path starts with ~
     if string.sub(path, 1, 1) == '~' then
         -- Get the user's home directory
