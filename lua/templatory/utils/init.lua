@@ -1,19 +1,23 @@
 local M = {}
 
+M.PLUGIN_NAME = "templatory"
+
+-- Set the skeleton directory for ease of access in this file
 M.set_skdir = function (skdir)
-    print(skdir)
     M.skdir = skdir
 end
 
+-- Check if `path` points to a valid file that exists
 M.is_file = function (path)
     local stat = vim.loop.fs_stat(path)
     return stat and stat.type == "file"
 end
 
+-- Get all the skeleton files from the skeleton directory
 M.get_all_skfiles = function ()
     local handle, err = vim.loop.fs_scandir(M.skdir)
     if not handle then
-        print("Error opening skeleton directory: " .. err)
+        vim.notify(string.format("%s: Error opening skeleton directory: " .. err, err), vim.log.levels.ERROR)
         return {}
     end
 
@@ -59,9 +63,17 @@ end
 M.prompt_for_no_file = function (ext)
     local input = vim.fn.input("No skeleton file found. Do you want to create one ? (y/n): ")
     if input:lower() == 'y' then
-        -- TODO : detect if there are multiple files. If there are, provide a ui select menu to select the template required.
-        -- vim.api.nvim_command("edit " .. M.skdir .. string.format("%s.%s", ext))
-        vim.api.nvim_set_option_value("filetype", vim.bo.filetype, {})
+        local ft = vim.bo.filetype
+        local bufnr = vim.api.nvim_create_buf(true, false)
+        vim.api.nvim_set_current_buf(bufnr)
+        vim.bo.filetype = ft
+        vim.notify("New template file opened. Save it once editing is finished with the extension of the required language", vim.log.levels.INFO)
+        if ft == nil then
+            vim.notify("Could not determine the filetype. Please set the filetype if you wish to", vim.log.levels.WARN)
+        end
+
+    else
+        return
     end
 end
 
@@ -75,7 +87,7 @@ end
 M.get_skfiles_with_ext = function(ext)
     local handle, err = vim.loop.fs_scandir(M.skdir)
     if not handle then
-        print("Error opening skeleton directory: " .. err)
+        vim.notify(string.format("%s: Error opening skeleton directory: " .. err, M.PLUGIN_NAME), vim.log.levels.ERROR)
         return {}
     end
 
