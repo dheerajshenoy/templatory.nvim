@@ -1,6 +1,6 @@
 #include <iostream>
 
 int main (int argc, char *argv[]) {
-    $C
+    //$C
     return 0;
 }
