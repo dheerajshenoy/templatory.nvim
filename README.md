@@ -125,3 +125,7 @@ int main(int argc, char* argv[])
 ### Demo
 
 https://github.com/dheerajshenoy/templatory.nvim/assets/21986384/abd3f33b-0752-4bcc-bd13-4646d252d477
+
+# TODO
+
+- [ ] Directory based templates: Based on blacklisted directories, create files with a specific content in them. For example, when creating files for plugins for the lazy package manager inside the plugins directory in the config directory, create a file with required contents which are boilerplate and put cursor where we can type the URL of the plugin directly.
