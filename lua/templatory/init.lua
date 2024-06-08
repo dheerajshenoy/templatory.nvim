@@ -46,7 +46,6 @@ M.__read_file = function (ext)
 end
 
 M.__handle_content = function (content, ext)
-
     if M.prompt then
         local input = vim.fn.input("Do you want to insert the template ? (y/n): ")
         if input:lower() == 'y' then
@@ -96,7 +95,6 @@ M.setup = function(opts)
     M.prompt_for_no_file = opts.prompt_for_no_file or false
     M.auto_insert_template = opts.auto_insert_template or true
     M.prompt_no_skfiles = opts.prompt_no_skfiles or true
-
 
     -- Check for skeleton directory
     if M.templates_dir == nil then
@@ -182,7 +180,7 @@ end
 -- Function that displays info about the template files in the template directory
 M.info = function ()
     local nfiles = #utils.get_all_skfiles()
-    
+
     if nfiles > 1 then
         vim.schedule(function() vim.notify(string.format("%s: Found %d template files in the '%s' skeleton directory.", PLUGIN_NAME, nfiles, M.templates_dir), logl.INFO) end)
     else
