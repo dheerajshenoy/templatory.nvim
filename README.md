@@ -43,13 +43,13 @@ Add the following code snippet for changing the default behaviour
 
 ```lua
 require("templatory").setup({
-            templates_dir = "~/Gits/templatory.nvim/skeletons/", -- the skeleton directory (default: ~/.config/nvim/templates)
-            goto_cursor_line = true, -- Goto the line with the `cursor_pattern` after inserting template (default: true)
-            cursor_pattern = "$C", -- Pattern used to represent the cursor position after template insertion (default: $C)
-            prompt = false, -- Prompt before adding the template (default: false)
-            echo_no_file = true, -- Print message when no skeleton file is found for the current filetype (default: false)
-            prompt_for_no_file = true, -- Prompt message asking to create a template when no file is found (default: false)
-            auto_insert_template = true, -- Load the template to a file automagically without needing to call `:TemplatoryInject`
+    templates_dir = "~/Gits/templatory.nvim/skeletons/", -- the skeleton directory (default: ~/.config/nvim/templates)
+    goto_cursor_line = true, -- Goto the line with the `cursor_pattern` after inserting template (default: true)
+    cursor_pattern = "$C", -- Pattern used to represent the cursor position after template insertion (default: $C)
+    prompt = false, -- Prompt before adding the template (default: false)
+    echo_no_file = true, -- Print message when no skeleton file is found for the current filetype (default: false)
+    prompt_for_no_file = true, -- Prompt message asking to create a template when no file is found (default: false)
+    auto_insert_template = true, -- Load the template to a file automagically without needing to call `:TemplatoryInject`
 })
 ````
 
@@ -60,11 +60,11 @@ The plugin creates a user command `Templatory` which has 4 options:
 - `new` : opens an empty file in the templates directory
 - `visit_file` : open the template file for the current opened buffer filetype
 - `visit_dir` : open the templates directory 
-- `inject` : inject the template file content to the current buffer, if template file exists for the current buffer filetype
+- `inject` : inject the template file content to the current buffer, if template file exists for the current buffer filetype or if the current working directory of the file is a 'skeletal directory'.
 
 These are specified like `:Templatory option_name` where `option_name` is one of the four options listed above.
 
-### Workflow
+### Workflow 1 (Skeletal files)
 
 1. Let's say I want to create a template file for C++ boilerplate code. I create a new template file using `:Templatory new` and hen save it with some filename (filenames don't matter, only the extensions do!), let's say `sk.cpp` with the following contents and save the file.
 
@@ -122,10 +122,24 @@ int main(int argc, char* argv[])
 
 ![templatory-nvim-select-menu](https://github.com/dheerajshenoy/templatory.nvim/assets/21986384/b9bc60a9-8e95-4cc5-8e13-3246fe44f5ee)
 
+### Workflow 2 (Skeletal directories)
+
+Skeletal directories are important when you have a directory and when any new file is created inside this directory, the boilerplate code for this will be the same regardless of the filetype or extension of the file. Best example is for a plugin manager directory, where you add files for each of the plugins you want to configure, and the code more or less remains the same for each of the files created in the directory.
+
+1. Let's say I want to create a skeletal directory at some directory `A/B/C`. So that whenever I create any file within the directory, I would want some code which would be required for any files being created within this directory.
+
+2. I navigate to that directory `A/B/C` and then call the `Templatory new` command. Templatory can guess based on the buffer, if it is a directory or a file, so that it can create these "skeletal directory" entries if it is indeed a directory. (*NOTE*: For users using NvimTree or oil.nvim or other plugins, the filetypes of directories will depend on these plugins and have to be manually added to the setup function of Templatory through `dir_filetypes` option. By default, oil.nvim and NvimTree and Netrw buffers will be detected by Templatory.). In this case, since we opened a directory, a buffer is created with the filename that might look weird (A|B|C). This format is used by the plugin to get the information about which directories are considered as Skeletal directories. (Under the hood, it converts these pipes into / in Linux when processing.)
+
+3. Populate the file with the required code and then save.
+
+4. Whenever new file is created in the directory which is a skeletal directory, code will be injected (if auto insert is enabled) or can be injected through `Templatory inject` command.
+
+5. One thing to note here is that skeletal directories take precedence over skeletal files. So, if for example, a skeletal file exists for C++ files, and if a C++ file exists in a directory which also happens to be a skeletal directory, then the code from the skeletal directory will be injected and not the skeletal file code.
+
 ### Demo
 
 https://github.com/dheerajshenoy/templatory.nvim/assets/21986384/abd3f33b-0752-4bcc-bd13-4646d252d477
 
 # TODO
 
-- [ ] Directory based templates: Based on blacklisted directories, create files with a specific content in them. For example, when creating files for plugins for the lazy package manager inside the plugins directory in the config directory, create a file with required contents which are boilerplate and put cursor where we can type the URL of the plugin directly.
+- [x] Directory based templates: Based on blacklisted directories, create files with a specific content in them. For example, when creating files for plugins for the lazy package manager inside the plugins directory in the config directory, create a file with required contents which are boilerplate and put cursor where we can type the URL of the plugin directly.

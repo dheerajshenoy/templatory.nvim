@@ -13,6 +13,28 @@ M.is_file = function (path)
     return stat and stat.type == "file"
 end
 
+M.get_all_dirskfiles = function ()
+
+    local handle, err = vim.loop.fs_scandir(M.templates_dir)
+    if not handle then
+        vim.notify(string.format("%s: Error opening skeleton directory: " .. err, err), vim.log.levels.ERROR)
+        return {}
+    end
+
+    local result = {}
+
+    while true do
+        local name, typ = vim.loop.fs_scandir_next(handle)
+        if not name then break end
+
+        if typ == 'file' and name:match("%.%w+$") == nil then
+            table.insert(result, name)
+        end
+    end
+    return result
+
+end
+
 -- Get all the skeleton files from the skeleton directory
 M.get_all_skfiles = function ()
     local handle, err = vim.loop.fs_scandir(M.templates_dir)
@@ -102,6 +124,32 @@ M.get_skfiles_with_ext = function(ext)
     end
     return result
 
+end
+
+-- Check if the given directory is part of the skeleton directory
+M.is_skdir = function(dir)
+
+    local handle, err = vim.loop.fs_scandir(M.templates_dir)
+    if not handle then
+        vim.notify(string.format("%s: Error opening skeleton directory: " .. err, M.PLUGIN_NAME), vim.log.levels.ERROR)
+        return {}
+    end
+
+    while true do
+        local name, typ = vim.loop.fs_scandir_next(handle)
+        if not name then break end
+        if type == 'dir' and name == dir then
+            return true
+        end
+    end
+
+    return false
+end
+
+-- Function that returns % separated path to a directory
+M.gen_skdir_path = function ()
+    local path = vim.fn.getcwd()
+    return path.gsub(path, "/", "|")
 end
 
 return M
