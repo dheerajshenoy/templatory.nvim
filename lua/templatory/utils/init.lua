@@ -147,9 +147,8 @@ M.is_skdir = function(dir)
 end
 
 -- Function that returns % separated path to a directory
-M.gen_skdir_path = function ()
-    local path = vim.fn.getcwd()
-    return path.gsub(path, "/", "|")
+M.gen_skdir_path = function (dir)
+    return dir.gsub(dir, "/", "|")
 end
 
 return M

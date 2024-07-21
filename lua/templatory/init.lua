@@ -69,28 +69,25 @@ M.__template_insert = function()
 
     local ext = vim.fn.expand("%:e")
 
-    if ext == "" then
-        local res = M.__is_a_dirsk()
+    local res = M.__is_a_dirsk()
 
+    if res ~= false then
+        if res[1] ~= nil then
 
-        if res ~= false then
-            if res[1] ~= nil then
+            local bufnr = vim.api.nvim_get_current_buf()
+            local content = vim.fn.readfile(M.templates_dir .. "/" .. res[2])
+            vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, content)
 
-                local bufnr = vim.api.nvim_get_current_buf()
-                local content = vim.fn.readfile(M.templates_dir .. "/" .. res[2])
-                vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, content)
-
-                if M.goto_cursor_line then
-                    local ln = vim.fn.search(M.cursor_pattern, "nw")
-                    if ln ~= 0 then
-                        vim.api.nvim_win_set_cursor(0, { ln, 0 })
-                        vim.api.nvim_buf_set_lines(bufnr, ln - 1, ln, false, { "" })
-                        vim.api.nvim_win_set_cursor(0, { ln, 0 })
-                    end
+            if M.goto_cursor_line then
+                local ln = vim.fn.search(M.cursor_pattern, "nw")
+                if ln ~= 0 then
+                    vim.api.nvim_win_set_cursor(0, { ln, 0 })
+                    vim.api.nvim_buf_set_lines(bufnr, ln - 1, ln, false, { "" })
+                    vim.api.nvim_win_set_cursor(0, { ln, 0 })
                 end
             end
-            return
         end
+        return
     end
 
     local status = M.__read_file(ext)
@@ -159,6 +156,10 @@ M.__is_buf_a_dir = function ()
 
     local bft = vim.bo.filetype
 
+    if bft == "" then
+        return vim.fn.isdirectory(vim.api.nvim_get_current_buf())
+    end
+
     for _, fts in pairs(M.dir_filetypes) do
         if bft == fts then
             return true
@@ -181,10 +182,11 @@ M.new = function ()
         vim.bo[bufnr].modified = true
         --
         -- -- Switch to it
+        local old_dir = vim.fn.getcwd()
         vim.api.nvim_set_current_dir(M.templates_dir)
         --
         -- -- Set name
-        local name = utils.gen_skdir_path()
+        local name = utils.gen_skdir_path(old_dir)
         --
         vim.api.nvim_set_current_buf(bufnr)
         vim.api.nvim_buf_set_name(bufnr, name)
