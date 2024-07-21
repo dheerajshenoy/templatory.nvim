@@ -140,6 +140,10 @@ Skeletal directories are important when you have a directory and when any new fi
 
 https://github.com/dheerajshenoy/templatory.nvim/assets/21986384/abd3f33b-0752-4bcc-bd13-4646d252d477
 
+https://github.com/user-attachments/assets/116e2fb0-ffc0-45e1-823b-83b7d6126e0f
+
+
+
 # TODO
 
 - [x] Directory based templates: Based on blacklisted directories, create files with a specific content in them. For example, when creating files for plugins for the lazy package manager inside the plugins directory in the config directory, create a file with required contents which are boilerplate and put cursor where we can type the URL of the plugin directly.
