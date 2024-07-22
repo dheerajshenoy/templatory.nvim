@@ -1,6 +1,12 @@
 # templatory.nvim
 A neovim plugin for managing and using file templates.
 
+## Demo
+
+https://github.com/dheerajshenoy/templatory.nvim/assets/21986384/abd3f33b-0752-4bcc-bd13-4646d252d477
+
+https://github.com/user-attachments/assets/116e2fb0-ffc0-45e1-823b-83b7d6126e0f
+
 ## What are templates ?
 
 Templates or skeleton files are files that contain boilerplate code. These are useful when you create a new file and want to skip writing the boilerplate code. Best example is the #include directives & main function of C++. Every program requires it, so just create a template file for it and templatory.nvim will do the rest. Sounds cool ? Let's get you started using this plugin then.
@@ -135,12 +141,6 @@ Skeletal directories are important when you have a directory and when any new fi
 4. Whenever new file is created in the directory which is a skeletal directory, code will be injected (if auto insert is enabled) or can be injected through `Templatory inject` command.
 
 5. One thing to note here is that skeletal directories take precedence over skeletal files. So, if for example, a skeletal file exists for C++ files, and if a C++ file exists in a directory which also happens to be a skeletal directory, then the code from the skeletal directory will be injected and not the skeletal file code.
-
-### Demo
-
-https://github.com/dheerajshenoy/templatory.nvim/assets/21986384/abd3f33b-0752-4bcc-bd13-4646d252d477
-
-https://github.com/user-attachments/assets/116e2fb0-ffc0-45e1-823b-83b7d6126e0f
 
 
 
