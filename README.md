@@ -11,6 +11,10 @@ https://github.com/user-attachments/assets/116e2fb0-ffc0-45e1-823b-83b7d6126e0f
 
 Templates or skeleton files are files that contain boilerplate code. These are useful when you create a new file and want to skip writing the boilerplate code. Best example is the #include directives & main function of C++. Every program requires it, so just create a template file for it and templatory.nvim will do the rest. Sounds cool ? Let's get you started using this plugin then.
 
+### Skeletal directories
+
+These are similar to skeleton files but instead these work on files in a directory irrespective of what those files are. So, if a directory is marked as skeletal directory with some content associated with it, then every time a new file is created inside this directory within neovim, the content associated with the skeletal directory is injected into every file.
+
 ## Using templatory.nvim
 
 ### Installation
