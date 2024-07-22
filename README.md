@@ -38,6 +38,7 @@ These are similar to skeleton files but instead these work on files in a directo
             echo_no_file = false,
             prompt_for_no_file = true,
             auto_insert_template = true,
+            dir_filetypes = { "oil", "NerdTree", "Netrw" } -- you can skip this option
         })
     end
 }
