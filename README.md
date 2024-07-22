@@ -1,6 +1,8 @@
 # templatory.nvim
 A neovim plugin for managing and using file templates.
 
+*NOTE*: Please do not lazy load this plugin.
+
 ## Demo
 
 **NOTE**: I am not using the auto insertion option of the plugin during the demo, and hence I use the `Templatory inject` command to insert it manually. 
@@ -26,7 +28,6 @@ These are similar to skeleton files but instead these work on files in a directo
 ```lua
 {
     "dheerajshenoy/templatory.nvim",
-    event = "VeryLazy",
     config = function ()
         require("templatory").setup({
             templates_dir = "~/Gits/templatory.nvim/skeletons/",
@@ -41,6 +42,8 @@ These are similar to skeleton files but instead these work on files in a directo
     end
 }
 ```
+
+*NOTE*: Please do not lazy load this plugin.
 
 2. Require this module somewhere in your neovim config.
 

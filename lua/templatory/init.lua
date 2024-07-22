@@ -55,16 +55,16 @@ M.setup = function(opts)
                     callback = funcs.__template_insert
                 })
 
-                -- Funky hack for when opening files through `nvim filename`
-                -- The BufNewFile is not being triggered, so had to come up with this hacky solution
-                -- where we check if the file exists or not. If it doesn't insert the template code
-                
-                local bufnr = vim.api.nvim_get_current_buf()
-                local filename = vim.api.nvim_buf_get_name(bufnr)
-
-                if vim.fn.filereadable(filename) == 0 then
-                    funcs.__template_insert()
-                end
+                -- -- Funky hack for when opening files through `nvim filename`
+                -- -- The BufNewFile is not being triggered, so had to come up with this hacky solution
+                -- -- where we check if the file exists or not. If it doesn't insert the template code
+                --
+                -- local bufnr = vim.api.nvim_get_current_buf()
+                -- local filename = vim.api.nvim_buf_get_name(bufnr)
+                --
+                -- if vim.fn.filereadable(filename) == 0 then
+                --     funcs.__template_insert()
+                -- end
 
             else
                 vim.api.nvim_del_augroup_by_name(PLUGIN_NAME)
