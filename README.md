@@ -1,8 +1,6 @@
 # templatory.nvim
 A neovim plugin for managing and using file templates.
 
-**NOTE**: The auto insertion option is currently not working due to some odd reason. I'll be fixing it ASAP.
-
 ## Demo
 
 **NOTE**: I am not using the auto insertion option of the plugin during the demo, and hence I use the `Templatory inject` command to insert it manually. 
