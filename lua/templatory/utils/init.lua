@@ -2,7 +2,7 @@ local M = {}
 
 M.PLUGIN_NAME = "templatory"
 
--- Set the skeleton directory for ease of access in this file
+-- Set the template directory for ease of access in this file
 M.set_templates_dir = function (templates_dir)
     M.templates_dir = templates_dir
 end
@@ -17,7 +17,7 @@ M.get_all_dirskfiles = function ()
 
     local handle, err = vim.loop.fs_scandir(M.templates_dir)
     if not handle then
-        vim.notify(string.format("%s: Error opening skeleton directory: " .. err, err), vim.log.levels.ERROR)
+        vim.notify(string.format("%s: Error opening template directory: " .. err, err), vim.log.levels.ERROR)
         return {}
     end
 
@@ -35,11 +35,11 @@ M.get_all_dirskfiles = function ()
 
 end
 
--- Get all the skeleton files from the skeleton directory
+-- Get all the template files from the template directory
 M.get_all_skfiles = function ()
     local handle, err = vim.loop.fs_scandir(M.templates_dir)
     if not handle then
-        vim.notify(string.format("%s: Error opening skeleton directory: " .. err, err), vim.log.levels.ERROR)
+        vim.notify(string.format("%s: Error opening template directory: " .. err, err), vim.log.levels.ERROR)
         return {}
     end
 
@@ -83,7 +83,7 @@ M.has_skfile = function (fext)
 end
 
 M.prompt_for_no_file = function (ext)
-    local input = vim.fn.input("No skeleton file found. Do you want to create one ? (y/n): ")
+    local input = vim.fn.input("No template file found. Do you want to create one ? (y/n): ")
     if input:lower() == 'y' then
         local ft = vim.bo.filetype
         local bufnr = vim.api.nvim_create_buf(true, false)
@@ -109,7 +109,7 @@ end
 M.get_skfiles_with_ext = function(ext)
     local handle, err = vim.loop.fs_scandir(M.templates_dir)
     if not handle then
-        vim.notify(string.format("%s: Error opening skeleton directory: " .. err, M.PLUGIN_NAME), vim.log.levels.ERROR)
+        vim.notify(string.format("%s: Error opening template directory: " .. err, M.PLUGIN_NAME), vim.log.levels.ERROR)
         return {}
     end
 
@@ -126,12 +126,12 @@ M.get_skfiles_with_ext = function(ext)
 
 end
 
--- Check if the given directory is part of the skeleton directory
+-- Check if the given directory is part of the template directory
 M.is_skdir = function(dir)
 
     local handle, err = vim.loop.fs_scandir(M.templates_dir)
     if not handle then
-        vim.notify(string.format("%s: Error opening skeleton directory: " .. err, M.PLUGIN_NAME), vim.log.levels.ERROR)
+        vim.notify(string.format("%s: Error opening template directory: " .. err, M.PLUGIN_NAME), vim.log.levels.ERROR)
         return {}
     end
 

@@ -1,3 +1,11 @@
+
+# V 0.3
+
+## Bug Fix
+
+- Auto injection of template code was not working when opening non existent file through `nvim filename`. Hacky solution has been added
+- Code has been cleaned
+
 # V 0.2
 
 ## Features
